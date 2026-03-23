@@ -130,10 +130,6 @@
       gap: 8px;
     }
 
-    .tip-row.is-hidden {
-      display: none;
-    }
-
     .tip-num {
       width: 28px;
       min-height: 42px;
@@ -356,17 +352,17 @@
 
       <section>
         <h2>1. 훌륭한 발표를 위한 주의할 점 (3가지)</h2>
-        <p class="guide">힌트를 보고 주의할 점을 적어 보세요. 다음 힌트는 앞의 칸을 채우면 순서대로 나타납니다.</p>
+        <p class="guide">힌트를 보고 주의할 점을 적어 보세요.</p>
         <div class="tips-grid">
           <div class="tip-row">
             <span class="tip-num">1</span>
             <textarea id="tip1" data-save rows="2" placeholder="힌트: 말은?"></textarea>
           </div>
-          <div class="tip-row is-hidden" id="tipRow2">
+          <div class="tip-row">
             <span class="tip-num">2</span>
             <textarea id="tip2" data-save rows="2" placeholder="힌트: 태도는?"></textarea>
           </div>
-          <div class="tip-row is-hidden" id="tipRow3">
+          <div class="tip-row">
             <span class="tip-num">3</span>
             <textarea id="tip3" data-save rows="2" placeholder="힌트: 발표란 듣는 사람이 있다. 그렇다면?"></textarea>
           </div>
@@ -600,8 +596,6 @@
     const tip1 = document.getElementById("tip1");
     const tip2 = document.getElementById("tip2");
     const tip3 = document.getElementById("tip3");
-    const tipRow2 = document.getElementById("tipRow2");
-    const tipRow3 = document.getElementById("tipRow3");
     const reflectTip1 = document.getElementById("reflectTip1");
     const reflectTip2 = document.getElementById("reflectTip2");
     const reflectTip3 = document.getElementById("reflectTip3");
@@ -627,13 +621,6 @@
       });
     }
 
-    function updateHintVisibility() {
-      const hasTip1 = tip1.value.trim().length > 0;
-      const hasTip2 = tip2.value.trim().length > 0;
-      tipRow2.classList.toggle("is-hidden", !hasTip1);
-      tipRow3.classList.toggle("is-hidden", !hasTip2);
-    }
-
     function updateReflectionPrompts() {
       reflectTip1.textContent = tip1.value.trim() || "주의할 점 1";
       reflectTip2.textContent = tip2.value.trim() || "주의할 점 2";
@@ -655,7 +642,6 @@
         if (!raw) return;
         const parsed = JSON.parse(raw);
         setFormData(parsed.data);
-        updateHintVisibility();
         updateReflectionPrompts();
       } catch (error) {
         showStatus("저장된 내용을 불러오지 못했습니다.", true);
@@ -783,13 +769,11 @@
 
     [tip1, tip2, tip3].forEach((tipField) => {
       tipField.addEventListener("input", () => {
-        updateHintVisibility();
         updateReflectionPrompts();
       });
     });
 
     loadWorksheet();
-    updateHintVisibility();
     updateReflectionPrompts();
   </script>
 </body>
