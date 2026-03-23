@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>국토 여행 계획 발표 워크시트</title>
+  <style>
+    :root {
+      --bg: #f6f3e9;
+      --card: #fffdf7;
+      --line: #d8d1be;
+      --text: #2e3b32;
+      --sub: #5d6d61;
+      --main: #1e7a6f;
+      --main-dark: #166158;
+      --accent: #2f91d1;
+      --danger: #f25f5c;
+      --sand: #efe3c8;
+      --sea: #d8eef8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 14%, rgba(47, 145, 209, 0.12) 0 180px, transparent 181px),
+        radial-gradient(circle at 88% 82%, rgba(30, 122, 111, 0.1) 0 210px, transparent 211px),
+        linear-gradient(180deg, #f7f3e7 0%, #f9f7ee 50%, #f4f7f8 100%);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+    }
+
+    .container {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 20px 16px 110px;
+    }
+
+    .worksheet {
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(58, 73, 62, 0.12);
+      overflow: hidden;
+    }
+
+    .title-area {
+      padding: 18px 18px 14px;
+      border-bottom: 2px dashed #c5cdb9;
+      background: linear-gradient(135deg, var(--sand) 0%, #f3ecd6 55%, var(--sea) 100%);
+    }
+
+    .title {
+      margin: 0 0 8px;
+      font-size: clamp(22px, 3.5vw, 30px);
+      line-height: 1.2;
+      color: #22574f;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      color: var(--sub);
+      max-width: 340px;
+    }
+
+    .meta-item input {
+      width: min(230px, 70vw);
+      height: 38px;
+      border: 1.8px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      line-height: 1.4;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    section {
+      padding: 18px;
+      border-bottom: 1px solid #e7e2d4;
+    }
+
+    section:last-child {
+      border-bottom: none;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: #1f6b5f;
+    }
+
+    p.guide {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: #4f6558;
+      line-height: 1.5;
+    }
+
+    .tips-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tip-row {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .tip-row.is-hidden {
+      display: none;
+    }
+
+    .tip-num {
+      width: 28px;
+      min-height: 42px;
+      border-radius: 8px;
+      background: #ddf1ed;
+      color: #1e7a6f;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    textarea,
+    input[type="text"] {
+      width: 100%;
+      border: 1.8px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 15px;
+      color: var(--text);
+      background: #fff;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus {
+      border-color: var(--main);
+      box-shadow: 0 0 0 3px rgba(47, 111, 236, 0.15);
+    }
+
+    .memo-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .memo-card {
+      border: 1.6px solid #d8e2c9;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #fffef8 0%, #f8fbf6 100%);
+      padding: 12px;
+    }
+
+    .memo-top-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .memo-item {
+      display: grid;
+      gap: 6px;
+    }
+
+    .memo-item label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38665c;
+    }
+
+    .memo-short {
+      height: 40px;
+    }
+
+    .memo-long-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .memo-long-item {
+      display: grid;
+      gap: 6px;
+    }
+
+    .memo-long-item label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38665c;
+    }
+
+    .memo-long-item textarea {
+      min-height: 90px;
+      border: 1.4px solid #cfdbc5;
+      border-radius: 8px;
+      font-size: 14px;
+      padding: 8px;
+    }
+
+    .terrain-select {
+      width: 100%;
+      min-height: 40px;
+      border: 1.4px solid #cfdbc5;
+      border-radius: 8px;
+      font-size: 14px;
+      padding: 8px;
+      background: #fff;
+    }
+
+    .self-check-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check-item {
+      border: 1.5px solid #d8e2c9;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fffef8;
+    }
+
+    .check-item strong {
+      display: block;
+      margin-bottom: 7px;
+      color: #2a6f64;
+      font-size: 15px;
+    }
+
+    .fab-wrap {
+      position: fixed;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      display: grid;
+      gap: 10px;
+      z-index: 1200;
+    }
+
+    .fab-btn {
+      min-width: 165px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--main);
+      box-shadow: 0 8px 18px rgba(31, 76, 158, 0.25);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .fab-btn:hover {
+      background: var(--main-dark);
+    }
+
+    .fab-btn.capture {
+      background: var(--accent);
+    }
+
+    .fab-btn.capture:hover {
+      background: #227bb2;
+    }
+
+    .status {
+      position: fixed;
+      left: 50%;
+      bottom: calc(20px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      min-width: 230px;
+      max-width: 90vw;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(35, 48, 67, 0.92);
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1300;
+    }
+
+    .status.show {
+      opacity: 1;
+    }
+
+    .status.error {
+      background: rgba(193, 52, 52, 0.95);
+    }
+
+    @media (max-width: 860px) {
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .memo-top-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .fab-btn {
+        min-width: 148px;
+        font-size: 14px;
+      }
+    }
+
+    @media print {
+      .fab-wrap,
+      .status {
+        display: none !important;
+      }
+
+      body {
+        background: #fff;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <main class="worksheet" id="worksheet">
+      <header class="title-area">
+        <h1 class="title">국토 여행 계획 발표 워크시트</h1>
+        <div class="meta-grid">
+          <label class="meta-item">
+            이름
+            <input type="text" data-save placeholder="이름을 입력하세요" />
+          </label>
+        </div>
+      </header>
+
+      <section>
+        <h2>1. 훌륭한 발표를 위한 주의할 점 (3가지)</h2>
+        <p class="guide">힌트를 보고 주의할 점을 적어 보세요. 다음 힌트는 앞의 칸을 채우면 순서대로 나타납니다.</p>
+        <div class="tips-grid">
+          <div class="tip-row">
+            <span class="tip-num">1</span>
+            <textarea id="tip1" data-save rows="2" placeholder="힌트: 말은?"></textarea>
+          </div>
+          <div class="tip-row is-hidden" id="tipRow2">
+            <span class="tip-num">2</span>
+            <textarea id="tip2" data-save rows="2" placeholder="힌트: 태도는?"></textarea>
+          </div>
+          <div class="tip-row is-hidden" id="tipRow3">
+            <span class="tip-num">3</span>
+            <textarea id="tip3" data-save rows="2" placeholder="힌트: 발표란 듣는 사람이 있다. 그렇다면?"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>2. 친구 발표를 들으며 메모하기</h2>
+        <p class="guide">총 5모둠 발표 내용을 메모해 보세요. 기본 정보는 간단히 적고, 잘한 점/개선할 점/질문은 길게 작성하세요.</p>
+        <div class="memo-list">
+          <article class="memo-card">
+            <div class="memo-top-grid">
+              <div class="memo-item">
+                <label>발표 친구 팀</label>
+                <input class="memo-short" type="text" data-save placeholder="예: 1모둠" />
+              </div>
+              <div class="memo-item">
+                <label>여행 장소</label>
+                <input class="memo-short" type="text" data-save placeholder="예: 제주도" />
+              </div>
+              <div class="memo-item">
+                <label>지형의 종류</label>
+                <select class="terrain-select" data-save>
+                  <option value="">선택</option>
+                  <option value="해안 지형">해안 지형</option>
+                  <option value="산지 지형">산지 지형</option>
+                  <option value="하천 지형">하천 지형</option>
+                </select>
+              </div>
+            </div>
+            <div class="memo-long-grid">
+              <div class="memo-long-item">
+                <label>잘한 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>개선할 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>질문하고 싶은 내용</label>
+                <textarea data-save></textarea>
+              </div>
+            </div>
+          </article>
+
+          <article class="memo-card">
+            <div class="memo-top-grid">
+              <div class="memo-item">
+                <label>발표 친구 팀</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>여행 장소</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>지형의 종류</label>
+                <select class="terrain-select" data-save>
+                  <option value="">선택</option>
+                  <option value="해안 지형">해안 지형</option>
+                  <option value="산지 지형">산지 지형</option>
+                  <option value="하천 지형">하천 지형</option>
+                </select>
+              </div>
+            </div>
+            <div class="memo-long-grid">
+              <div class="memo-long-item">
+                <label>잘한 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>개선할 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>질문하고 싶은 내용</label>
+                <textarea data-save></textarea>
+              </div>
+            </div>
+          </article>
+
+          <article class="memo-card">
+            <div class="memo-top-grid">
+              <div class="memo-item">
+                <label>발표 친구 팀</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>여행 장소</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>지형의 종류</label>
+                <select class="terrain-select" data-save>
+                  <option value="">선택</option>
+                  <option value="해안 지형">해안 지형</option>
+                  <option value="산지 지형">산지 지형</option>
+                  <option value="하천 지형">하천 지형</option>
+                </select>
+              </div>
+            </div>
+            <div class="memo-long-grid">
+              <div class="memo-long-item">
+                <label>잘한 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>개선할 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>질문하고 싶은 내용</label>
+                <textarea data-save></textarea>
+              </div>
+            </div>
+          </article>
+
+          <article class="memo-card">
+            <div class="memo-top-grid">
+              <div class="memo-item">
+                <label>발표 친구 팀</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>여행 장소</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>지형의 종류</label>
+                <select class="terrain-select" data-save>
+                  <option value="">선택</option>
+                  <option value="해안 지형">해안 지형</option>
+                  <option value="산지 지형">산지 지형</option>
+                  <option value="하천 지형">하천 지형</option>
+                </select>
+              </div>
+            </div>
+            <div class="memo-long-grid">
+              <div class="memo-long-item">
+                <label>잘한 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>개선할 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>질문하고 싶은 내용</label>
+                <textarea data-save></textarea>
+              </div>
+            </div>
+          </article>
+
+          <article class="memo-card">
+            <div class="memo-top-grid">
+              <div class="memo-item">
+                <label>발표 친구 팀</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>여행 장소</label>
+                <input class="memo-short" type="text" data-save />
+              </div>
+              <div class="memo-item">
+                <label>지형의 종류</label>
+                <select class="terrain-select" data-save>
+                  <option value="">선택</option>
+                  <option value="해안 지형">해안 지형</option>
+                  <option value="산지 지형">산지 지형</option>
+                  <option value="하천 지형">하천 지형</option>
+                </select>
+              </div>
+            </div>
+            <div class="memo-long-grid">
+              <div class="memo-long-item">
+                <label>잘한 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>개선할 점</label>
+                <textarea data-save></textarea>
+              </div>
+              <div class="memo-long-item">
+                <label>질문하고 싶은 내용</label>
+                <textarea data-save></textarea>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. 나의 발표 반성</h2>
+        <p class="guide">위에서 작성한 주의할 점 3가지를 기준으로, 내 발표를 스스로 돌아보고 다음 발표 계획까지 적어 보세요.</p>
+        <div class="self-check-grid">
+          <div class="check-item">
+            <strong><span id="reflectTip1">주의할 점 1</span>와(과) 관련해 나는 어떻게 했나요?</strong>
+            <textarea data-save rows="3" placeholder="잘한 점과 부족한 점을 함께 적어 보세요."></textarea>
+          </div>
+          <div class="check-item">
+            <strong><span id="reflectTip2">주의할 점 2</span>와(과) 관련해 나는 어떻게 했나요?</strong>
+            <textarea data-save rows="3"></textarea>
+          </div>
+          <div class="check-item">
+            <strong><span id="reflectTip3">주의할 점 3</span>와(과) 관련해 나는 어떻게 했나요?</strong>
+            <textarea data-save rows="3"></textarea>
+          </div>
+          <div class="check-item">
+            <strong>다음 발표에서 꼭 실천할 1가지</strong>
+            <textarea data-save rows="2" placeholder="예: 자료를 크게 보이게 만들기"></textarea>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="fab-wrap">
+    <button type="button" class="fab-btn" id="saveBtn">중간 저장</button>
+    <button type="button" class="fab-btn capture" id="captureBtn">학습지 캡쳐하기</button>
+  </div>
+  <div class="status" id="statusMsg" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "worksheet-korea-trip-v1";
+    const worksheet = document.getElementById("worksheet");
+    const saveBtn = document.getElementById("saveBtn");
+    const captureBtn = document.getElementById("captureBtn");
+    const statusMsg = document.getElementById("statusMsg");
+    const fields = Array.from(document.querySelectorAll("[data-save]"));
+    const tip1 = document.getElementById("tip1");
+    const tip2 = document.getElementById("tip2");
+    const tip3 = document.getElementById("tip3");
+    const tipRow2 = document.getElementById("tipRow2");
+    const tipRow3 = document.getElementById("tipRow3");
+    const reflectTip1 = document.getElementById("reflectTip1");
+    const reflectTip2 = document.getElementById("reflectTip2");
+    const reflectTip3 = document.getElementById("reflectTip3");
+
+    function showStatus(message, isError = false) {
+      statusMsg.textContent = message;
+      statusMsg.classList.add("show");
+      statusMsg.classList.toggle("error", isError);
+      window.clearTimeout(showStatus.timer);
+      showStatus.timer = window.setTimeout(() => {
+        statusMsg.classList.remove("show");
+      }, 1700);
+    }
+
+    function getFormData() {
+      return fields.map((field) => field.value);
+    }
+
+    function setFormData(data) {
+      if (!Array.isArray(data)) return;
+      fields.forEach((field, index) => {
+        field.value = data[index] || "";
+      });
+    }
+
+    function updateHintVisibility() {
+      const hasTip1 = tip1.value.trim().length > 0;
+      const hasTip2 = tip2.value.trim().length > 0;
+      tipRow2.classList.toggle("is-hidden", !hasTip1);
+      tipRow3.classList.toggle("is-hidden", !hasTip2);
+    }
+
+    function updateReflectionPrompts() {
+      reflectTip1.textContent = tip1.value.trim() || "주의할 점 1";
+      reflectTip2.textContent = tip2.value.trim() || "주의할 점 2";
+      reflectTip3.textContent = tip3.value.trim() || "주의할 점 3";
+    }
+
+    function saveWorksheet() {
+      const payload = {
+        savedAt: new Date().toISOString(),
+        data: getFormData(),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      showStatus("중간 저장이 완료되었습니다.");
+    }
+
+    function loadWorksheet() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        setFormData(parsed.data);
+        updateHintVisibility();
+        updateReflectionPrompts();
+      } catch (error) {
+        showStatus("저장된 내용을 불러오지 못했습니다.", true);
+      }
+    }
+
+    function triggerDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function captureWorksheet() {
+      try {
+        showStatus("캡처 이미지를 만드는 중...");
+        if (document.activeElement && typeof document.activeElement.blur === "function") {
+          document.activeElement.blur();
+        }
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        const captureWidth = Math.max(worksheet.scrollWidth, worksheet.clientWidth);
+        const captureHeight = Math.max(worksheet.scrollHeight, worksheet.clientHeight);
+        const canvas = await html2canvas(worksheet, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          width: captureWidth,
+          height: captureHeight,
+          windowWidth: captureWidth,
+          windowHeight: captureHeight,
+          scrollX: 0,
+          scrollY: -window.scrollY,
+          onclone: (doc) => {
+            const clonedWorksheet = doc.getElementById("worksheet");
+            if (!clonedWorksheet) return;
+
+            const controls = clonedWorksheet.querySelectorAll("input, textarea, select");
+            controls.forEach((control) => {
+              let text = "";
+              if (control.tagName === "SELECT") {
+                const selectedOption = control.options[control.selectedIndex];
+                text = selectedOption ? selectedOption.text : "";
+              } else {
+                text = control.value;
+              }
+
+              const replacement = doc.createElement("div");
+              const rect = control.getBoundingClientRect();
+              replacement.textContent = text || control.placeholder || "";
+              replacement.style.width = "100%";
+              replacement.style.minHeight = `${Math.max(rect.height, 38)}px`;
+              replacement.style.padding = "10px 12px";
+              replacement.style.border = "1.6px solid #c9d7c2";
+              replacement.style.borderRadius = "10px";
+              replacement.style.backgroundColor = "#ffffff";
+              replacement.style.color = text ? "#2e3b32" : "#8a978d";
+              replacement.style.fontSize = "15px";
+              replacement.style.lineHeight = "1.45";
+              replacement.style.whiteSpace = control.tagName === "TEXTAREA" ? "pre-wrap" : "nowrap";
+              replacement.style.wordBreak = "break-word";
+              replacement.style.overflow = "hidden";
+
+              control.replaceWith(replacement);
+            });
+          },
+        });
+
+        const filename = "국토여행_발표워크시트.png";
+
+        if (window.showSaveFilePicker) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: filename,
+              types: [
+                {
+                  description: "PNG 이미지",
+                  accept: { "image/png": [".png"] },
+                },
+              ],
+            });
+            const writable = await handle.createWritable();
+            await new Promise((resolve) => {
+              canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                await writable.write(blob);
+                await writable.close();
+                resolve();
+              }, "image/png");
+            });
+            showStatus("캡처 이미지가 저장되었습니다.");
+            return;
+          } catch (pickerError) {
+            // 파일 선택을 취소한 경우 기본 다운로드 방식으로 진행
+          }
+        }
+
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            showStatus("캡처 파일 생성에 실패했습니다.", true);
+            return;
+          }
+          triggerDownload(blob, filename);
+          showStatus("캡처 이미지가 다운로드되었습니다.");
+        }, "image/png");
+      } catch (error) {
+        showStatus("캡처 중 오류가 발생했습니다.", true);
+      }
+    }
+
+    saveBtn.addEventListener("click", saveWorksheet);
+    captureBtn.addEventListener("click", captureWorksheet);
+
+    // 실수로 닫아도 최대한 복구할 수 있도록 자동 임시 저장
+    fields.forEach((field) => {
+      field.addEventListener("change", () => {
+        const payload = { savedAt: new Date().toISOString(), data: getFormData() };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      });
+    });
+
+    [tip1, tip2, tip3].forEach((tipField) => {
+      tipField.addEventListener("input", () => {
+        updateHintVisibility();
+        updateReflectionPrompts();
+      });
+    });
+
+    loadWorksheet();
+    updateHintVisibility();
+    updateReflectionPrompts();
+  </script>
+</body>
+</html>
